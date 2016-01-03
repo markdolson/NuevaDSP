@@ -34,5 +34,10 @@ class Signal:
 
 
 def plot_signal(signal, add=False):
-    plt.plot(signal.signal.transpose())
+    x_axis_step = 1.0/signal.sample_rate
+    time = x_axis_step * signal.signal.size
+    x_axis = np.arange(0, time, x_axis_step)
+    print(x_axis)
+    plt.plot(x_axis, signal.signal.transpose())
+    plt.xlabel("Seconds")
         
