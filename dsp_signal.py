@@ -33,11 +33,10 @@ class Signal:
         return Audio(data=self.signal, rate=self.sample_rate)
 
 
-def plot_signal(signal, add=False):
-    x_axis_step = 1.0/signal.sample_rate
-    time = x_axis_step * signal.signal.size
-    x_axis = np.arange(0, time, x_axis_step)
-    print(x_axis)
-    plt.plot(x_axis, signal.signal.transpose())
-    plt.xlabel("Seconds")
+    def plot_signal(self):
+        x_axis_step = 1.0/self.sample_rate
+        time = x_axis_step * self.signal.size
+        x_axis = np.arange(0, time, x_axis_step)
+        plt.plot(x_axis, self.signal.transpose())
+        plt.xlabel("Seconds")
         
