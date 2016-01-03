@@ -1,4 +1,6 @@
 import numpy as np
+from IPython.display import Audio
+import matplotlib.pyplot as plt
 
 class Signal:
 
@@ -9,6 +11,9 @@ class Signal:
         self.signal = np.matrix(signal)
         self.sample_rate = 8000.0
         
+    def __str__(self):
+        return str(self.signal)
+
     def __add__(self, other):
         return Signal(self.signal + other.signal)
 
@@ -24,3 +29,10 @@ class Signal:
         return Signal(result)
 
     
+    def make_audio(self):
+        return Audio(data=self.signal, rate=self.sample_rate)
+
+
+def plot_signal(signal, add=False):
+    plt.plot(signal.signal.transpose())
+        
