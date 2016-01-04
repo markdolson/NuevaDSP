@@ -9,6 +9,12 @@ def test_addition():
     assert(sum_signal.signal[0, 1] == 3)
     assert(sum_signal.signal[0, 2] == 5)
 
+def test_scalar_addition():
+    a = dsp_signal.Signal([1,2,3]) + 6
+    assert(a.signal[0, 0] == 7)
+    assert(a.signal[0, 1] == 8)
+    assert(a.signal[0, 2] == 9)
+
 def test_mult():
     a = dsp_signal.Signal([1,2,3])
     b = dsp_signal.Signal([4,1,2])
@@ -17,3 +23,22 @@ def test_mult():
     assert(mult_signal.signal[0, 0] == 4)
     assert(mult_signal.signal[0, 1] == 2)
     assert(mult_signal.signal[0, 2] == 6)
+
+def test_scalar_mult():
+    a = dsp_signal.Signal([1,2,3]) * 2
+    assert(a.signal[0, 0] == 2)
+    assert(a.signal[0, 1] == 4)
+    assert(a.signal[0, 2] == 6)
+
+def test_shift():
+    a = dsp_signal.Signal([1,2,3])
+    a.shift(1)
+    assert(a.signal[0, 0] == 0)
+    assert(a.signal[0, 1] == 1)
+    assert(a.signal[0, 2] == 2)
+
+    a.shift(-2)
+
+    assert(a.signal[0, 0] == 2)
+    assert(a.signal[0, 1] == 0)
+    assert(a.signal[0, 2] == 0)
