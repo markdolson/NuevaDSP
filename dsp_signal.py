@@ -62,12 +62,18 @@ class Signal:
             for i in range(amount*-1):
                 new_sig.append(0)
 
-        self.signal = np.matrix(new_sig)
+        return Signal(np.matrix(new_sig))
 
     def stretch(self, amount):
         samples = amount * self.signal.size
         new_sig = scipy.signal.resample(self.signal, samples, axis=1)
-        self.signal = np.matrix(new_sig)
+        return Signal(np.matrix(new_sig))
+
+    def clip(self, start, end):
+        return Signal(self.signal[:, start:end])
+
+    def concatenate(self, other):
+        return Signal(np.concatenate([self.signal, other.signal], 1))
 
 def make_random_signal(length):
     pass

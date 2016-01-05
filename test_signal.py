@@ -32,13 +32,31 @@ def test_scalar_mult():
 
 def test_shift():
     a = dsp_signal.Signal([1,2,3])
-    a.shift(1)
+    a = a.shift(1)
+
     assert(a.signal[0, 0] == 0)
     assert(a.signal[0, 1] == 1)
     assert(a.signal[0, 2] == 2)
 
-    a.shift(-2)
+    a = a.shift(-2)
 
     assert(a.signal[0, 0] == 2)
     assert(a.signal[0, 1] == 0)
     assert(a.signal[0, 2] == 0)
+
+def test_clip():
+    a = dsp_signal.Signal([1,2,3])
+    a = a.clip(1,2)
+    assert(a.signal[0,0] == 2)
+
+def test_concatenate():
+    a = dsp_signal.Signal([1,2,3])
+    a = a.concatenate(a)
+
+    assert(a.signal[0, 0] == 1)
+    assert(a.signal[0, 1] == 2)
+    assert(a.signal[0, 2] == 3)
+    assert(a.signal[0, 3] == 1)
+    assert(a.signal[0, 4] == 2)
+    assert(a.signal[0, 5] == 3)
+
