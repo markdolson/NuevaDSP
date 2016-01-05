@@ -1,8 +1,10 @@
 import numpy as np
 from IPython.display import Audio
 import matplotlib.pyplot as plt
-import random
-import scipy.signal
+import random, wave
+import scipy.signal, scipy.io.wavfile
+
+DEFAULT_SAMPLE_RATE = 10000.0
 
 class Signal:
 
@@ -11,7 +13,7 @@ class Signal:
         signal - a list of numbers indicating values in the signal
         """
         self.signal = np.matrix(signal)
-        self.sample_rate = 10000.0
+        self.sample_rate = DEFAULT_SAMPLE_RATE
         
     def __str__(self):
         return str(self.signal)
@@ -28,7 +30,7 @@ class Signal:
             return Signal(np.multiply(self.signal, other))
 
         if len(self.signal) != len(other.signal):
-            raise ValueErrror("Cannot multoply signals with different lengths")
+            raise ValueErrror("Cannot multiply signals with different lengths")
 
         result = []
         for i in range(self.signal.size):
@@ -75,11 +77,39 @@ class Signal:
     def concatenate(self, other):
         return Signal(np.concatenate([self.signal, other.signal], 1))
 
-def make_random_signal(length):
-    pass
+def make_uniform_random_signal(length, minimum=-32768, maximum=32768):
+    signal = []
+    for i in range(length):
+        signal.append((random.random() * (maximum-minimum)) + minimum)
+
+    return Signal(signal)
+
+def make_gaussian_random_signal(length, mean=0, sd=1000):
+    signal = []
+    for i in range(length):
+        signal.append(np.random.normal())
+
+    return Signal(signal)
+    
 
 def make_signal_from_wav(filename):
-    pass
+    rate, data = scipy.io.wavfile.read(filename)
+    data = data.T #convert to row matrix
+    seconds = data.shape[1]/rate
+    samples = DEFAULT_SAMPLE_RATE * seconds
+
+    if data.shape[0] != 1: #mono
+        new_sig = []
+        for i in range(data.shape[1]):
+            new_sig.append(np.mean(data[:, i]))
+            
+        data = np.matrix(new_sig)
+    
+    else:
+        data = np.asmatrix(data)
+
+    resampled = scipy.signal.resample(data, samples, axis=1)
+    return Signal(resampled)
 
 def make_sin_signal(f, theta, length):
     pass
