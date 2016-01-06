@@ -1,7 +1,7 @@
 import numpy as np
 from IPython.display import Audio
 import matplotlib.pyplot as plt
-import random, wave
+import random, wave, math
 import scipy.signal, scipy.io.wavfile
 
 DEFAULT_SAMPLE_RATE = 10000.0
@@ -44,9 +44,7 @@ class Signal:
 
 
     def plot_signal(self):
-        x_axis_step = 1.0/self.sample_rate
-        time = x_axis_step * self.signal.size
-        x_axis = np.arange(0, time, x_axis_step)
+        x_axis = np.linspace(0, time, num=self.signal.size)
         plt.plot(x_axis, self.signal.transpose())
         plt.xlabel("Seconds")
         
@@ -92,26 +90,35 @@ def make_gaussian_random_signal(length, mean=0, sd=1000):
     return Signal(signal)
     
 
-def make_signal_from_wav(filename):
+def make_signal_from_wav(filename, channel=0):
+    
     rate, data = scipy.io.wavfile.read(filename)
     data = data.T #convert to row matrix
-    seconds = data.shape[1]/rate
-    samples = DEFAULT_SAMPLE_RATE * seconds
 
-    if data.shape[0] != 1: #mono
-        new_sig = []
-        for i in range(data.shape[1]):
-            new_sig.append(np.mean(data[:, i]))
-            
-        data = np.matrix(new_sig)
-    
-    else:
-        data = np.asmatrix(data)
+    if channel >= data.shape[0]:
+        print("Warning: Channel " + str(channel) + " requested but only " + \
+              str(data.shape[0]-1) + " channels present. Defaulting to 0")
+        channel = 0
+
+    data = data[channel, :]
+    data = np.asmatrix(data)
+    seconds = data.size/rate
+    samples = DEFAULT_SAMPLE_RATE * seconds
 
     resampled = scipy.signal.resample(data, samples, axis=1)
     return Signal(resampled)
 
-def make_sin_signal(f, theta, length):
-    pass
+def make_sin_signal(frequency, phase_shift, length):
+    cycles = float(length)/(DEFAULT_SAMPLE_RATE*frequency)
+    phase_shift = phase_shift % (2*math.pi)
+    cyc = np.linspace(phase_shift, phase_shift+(2*math.pi), num=(length/cycles))
+    
+    signal = cyc
+    for i in range(math.floor(cycles-1)):
+        signal = np.concatenate([signal, cyc])
+
+    #remainder = 
+    return Signal(np.sin(signal))
+    
 
 
