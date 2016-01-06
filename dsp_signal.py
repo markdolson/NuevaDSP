@@ -93,14 +93,17 @@ def make_gaussian_random_signal(length, mean=0, sd=1000):
 def make_signal_from_wav(filename, channel=0):
     
     rate, data = scipy.io.wavfile.read(filename)
-    data = data.T #convert to row matrix
 
-    if channel >= data.shape[0]:
-        print("Warning: Channel " + str(channel) + " requested but only " + \
-              str(data.shape[0]-1) + " channels present. Defaulting to 0")
+    if data.ndim > 1:
+        data = data.T #convert to row matrix
+
+        if channel >= data.shape[0]:
+            print("Warning: Channel " + str(channel) + " requested but only " \
+                  + str(data.shape[0]-1) + " channels present. Defaulting to 0")
         channel = 0
 
-    data = data[channel, :]
+        data = data[channel, :]
+
     data = np.asmatrix(data)
     seconds = data.size/rate
     samples = DEFAULT_SAMPLE_RATE * seconds
